@@ -1,4 +1,4 @@
-export const RARITY_LEVELS = {
+export const RARITY_MAX_LEVELS = {
   Common: 25,
   Excellent: 35,
   Rare: 55,

@@ -28,9 +28,9 @@ const initialSpider: Spider = {
     luck: 10,
   },
   condition: {
-    health: 100,
-    hunger: 80,
-    hydration: 90,
+    health: 10,
+    hunger: 10,
+    hydration: 10,
   },
   generation: 1,
   lastFed: new Date().toISOString(),
@@ -49,7 +49,7 @@ const initialPlayer: Player = {
   spiders: [initialSpider],
   balance: {
     SPIDER: 1000,
-    feeders: 50,
+    feeders: 500,
     gems: 10,
   },
   createdAt: new Date().toISOString(),
