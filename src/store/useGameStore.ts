@@ -18,7 +18,7 @@ const initialSpider: Spider = {
   name: 'Test Spider',
   rarity: 'Common',
   genetics: ['S', 'A', 'J'],
-  level: 1,
+  level: 11,
   experience: 0,
   power: 65,
   stats: {

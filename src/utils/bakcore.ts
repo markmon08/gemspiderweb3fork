@@ -4,8 +4,6 @@ import { Spider, Player } from '../types/spider';
 const TOKEN_GENERATION_RATE = 0.1; // Tokens generated per power point per hour
 const BASE_XP_PER_FEED = 10;
 const XP_PER_LEVEL = 100;
-const HEAL_COST = 5; // $SPIDER cost per heal
-const HEALTH_INCREASE = 30;
 
 // Helper: Get feeders needed based on level
 export const getFeedersNeeded = (level: number): number => {
@@ -29,55 +27,38 @@ export const experienceForNextLevel = (level: number): number => {
   return level * XP_PER_LEVEL;
 };
 
-// Core System: Feed or Hydrate a Spider
-export const updateSpiderCondition = (
-  spider: Spider,
-  availableFeeders: number,
-  type: "feed" | "hydrate"
-): { updatedSpider: Spider; remainingFeeders: number } | null => {
+// Core System: Feed a spider
+export const feedSpider = (spider: Spider, availableFeeders: number): Spider | null => {
   const feedersNeeded = getFeedersNeeded(spider.level);
-  if (availableFeeders < feedersNeeded) return null; // Not enough feeders
+  if (availableFeeders < feedersNeeded) {
+    return null;
+  }
 
-  const increaseAmount = 20; // Increase by 20%
-  const newConditionValue = Math.min(
-    100,
-    type === "feed"
-      ? spider.condition.hunger + increaseAmount
-      : spider.condition.hydration + increaseAmount
-  );
+  const xpGained = BASE_XP_PER_FEED * (1 + spider.level * 0.1);
+  const newExperience = spider.experience + xpGained;
+  const newLevel = calculateLevel(newExperience);
 
   return {
-    updatedSpider: {
-      ...spider,
-      condition: {
-        ...spider.condition,
-        [type === "feed" ? "hunger" : "hydration"]: newConditionValue,
-      },
-      lastFed: type === "feed" ? new Date().toISOString() : spider.lastFed,
-      lastHydrated: type === "hydrate" ? new Date().toISOString() : spider.lastHydrated,
+    ...spider,
+    condition: {
+      ...spider.condition,
+      hunger: Math.min(100, spider.condition.hunger + 20), // Increase hunger by 20%
     },
-    remainingFeeders: availableFeeders - feedersNeeded, // Deduct correct amount
+    experience: newExperience,
+    level: newLevel,
+    lastFed: new Date().toISOString(),
   };
 };
 
-// Core System: Heal a Spider using $SPIDER Tokens
-export const healSpider = (
-  spider: Spider,
-  availableTokens: number
-): { updatedSpider: Spider; remainingTokens: number } | null => {
-  if (availableTokens < HEAL_COST) return null; // Not enough tokens
-
-  const newHealth = Math.min(100, spider.condition.health + HEALTH_INCREASE);
-
+// Core System: Hydrate a spider
+export const hydrateSpider = (spider: Spider): Spider => {
   return {
-    updatedSpider: {
-      ...spider,
-      condition: {
-        ...spider.condition,
-        health: newHealth,
-      },
+    ...spider,
+    condition: {
+      ...spider.condition,
+      hydration: Math.min(100, spider.condition.hydration + 20), // Increase hydration by 20%
     },
-    remainingTokens: availableTokens - HEAL_COST, // Deduct token cost
+    lastHydrated: new Date().toISOString(),
   };
 };
 
