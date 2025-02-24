@@ -2,7 +2,7 @@ import React from 'react';
 import { useGameStore } from '../store/useGameStore';
 
 function Market() {
-  const { balance } = useGameStore();
+  const balance = useGameStore((state) => state.player.balance);
 
   const marketItems = [
     { id: 1, name: 'Spider Egg', price: 500, description: 'Hatch a new spider!' },
